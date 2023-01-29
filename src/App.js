@@ -36,7 +36,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/add-slides" element={<InsertSlides />} />
-                <Route path="/add-slapsh" element={<InsertSlides />} />
+                <Route path="/add-slapsh" element={<InsertSlapsh />} />
                 <Route path="/add-services" element={<AddServices />} />
                 <Route path="/add-award" element={<Award />} />
                 <Route path="/balaji-family" element={<Family />} />
@@ -50,7 +50,6 @@ function App() {
                 <Route path="/award" element={<Award />} />
                 <Route path="/form" element={<Form />} />
                 <Route path="/calendar" element={<Calendar />} />
-
               </Routes>
 
             </main>

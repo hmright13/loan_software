@@ -278,6 +278,24 @@ export const mockTransactions = [
   },
 ];
 
+
+export const newUserNotification = [
+  {
+    seq: 1,
+    titl: "title",
+    sub: "subject",
+    desc: "This is desc",
+    date: "12/7/2001"
+  },
+  {
+    seq: 2,
+    titl: "title2",
+    sub: "subject2",
+    desc: "This is desc2",
+    date: "12/7/2002"
+  },
+]
+
 export const mockBarData = [
   {
     country: "AD",

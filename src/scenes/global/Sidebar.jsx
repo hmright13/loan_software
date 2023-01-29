@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import myImg from './../../images/img.png'
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../theme";
+import LinearScaleIcon from '@mui/icons-material/LinearScale';
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
@@ -18,6 +19,7 @@ import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
 import Diversity3OutlinedIcon from "@mui/icons-material/Diversity3Outlined";
 import MessageIcon from "@mui/icons-material/MessageOutlined"
 import ArrowCircleLeftOutlinedIcon from '@mui/icons-material/ArrowCircleLeftOutlined';
+
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -144,7 +146,7 @@ const Sidebar = () => {
             <Item
               title="Add Slides"
               to="/add-slides"
-              icon={<DriveFileMoveOutlinedIcon />}
+              icon={<LinearScaleIcon />}
               selected={selected}
               setSelected={setSelected}
             />

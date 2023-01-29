@@ -36,8 +36,6 @@ const Insert = () => {
   // State to store uploaded file
   const [file, setFile] = useState("");
   const storageRef = ref(storage, `/Slapsh/${file.name}`);
-  // const deleteImageRef = ref(storage, `/Slapsh/${file.name}`);
-  // progress
   const [percent, setPercent] = useState(0);
   const [cards, setCards] = useState([]);
   // console.log("slapsh", cards);

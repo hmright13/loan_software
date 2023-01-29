@@ -28,16 +28,10 @@ const storage = getStorage(app);
 
 const InsertSlides = () => {
 
-
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
-
-
-    // State to store uploaded file
     const [file, setFile] = useState("");
     const storageRef = ref(storage, `/Slapsh/${file.name}`);
-    // const deleteImageRef = ref(storage, `/Slapsh/${file.name}`);
-    // progress
     const [percent, setPercent] = useState(0);
     const [cards, setCards] = useState([]);
     // console.log("slapsh", cards);
@@ -135,7 +129,7 @@ const InsertSlides = () => {
     return (
 
         <Box m="20px" width="98%" >
-            <Header title="Insert slides " subtitle="Insert your slides for home screen" />
+            <Header title="Insert Slapsh " subtitle="Insert your Slapsh " />
             <ShowAlert
                 sx={{ display: "none" }}
                 message={alertMessage}

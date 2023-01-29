@@ -3,7 +3,7 @@ import app from "../../firebase/config";
 import Header from "../../components/Header";
 import Cards from "../../components/Card";
 import Card from '@mui/material/Card';
-import { useTheme, IconButton, Box, Button, TextField, useMediaQuery, Typography, Toolbar, AppBar, Dialog, Slide, Grid, Stack, ImageList, ImageListItem, Accordion, AccordionSummary, AccordionDetails, AccordionActions } from "@mui/material";
+import { useTheme, IconButton, Box, Button, TextField, useMediaQuery, Typography, Toolbar, AppBar, Dialog, Slide, Grid, Stack, ImageList, ImageListItem, Accordion, AccordionSummary, AccordionDetails, AccordionActions, ImageListItemBar } from "@mui/material";
 import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternateOutlined';
 import { tokens } from "../../theme";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
@@ -38,9 +38,8 @@ const AddServices = () => {
     const [header, setHeader] = useState("");
     const [textField, setTextField] = useState("");
     const [textFieldTitle, setTextFieldTitle] = useState("");
-    const [suid_, setSuid] = useState("")
+    const [suid_, setSuid] = useState(null);
     const [cards, setCards] = useState([]);
-
     // console.log(cards)
     const [open, setOpen] = useState(false);
     const allInputs = { imgUrl: '' }
@@ -55,11 +54,6 @@ const AddServices = () => {
     const [openAlert, setOpenAlert] = useState(false)
     const [alertMessage, setAlertMessage] = useState("")
     // console.log("alertMessage", alertMessage);
-
-
-
-
-
 
 
     //    dilogbox start 
@@ -143,21 +137,19 @@ const AddServices = () => {
             })
     });
 
-
-///
     // delete services
     const deleteCardItems = (uid, url) => {
         deleteObject(ref(storage, `${url}`));
         remove(rdbf(db, `Src/${uid}`))
-        .then(() => {
-            setOpenAlert(true)
-            setAlertMessage("Url has been deleted")
-            
-        }).catch((err) => {
-            setOpenAlert(true)
-            setAlertMessage(`Photo has been not deleted ${err.message}`);
-            console.log("Error message", err.message)
-        });
+            .then(() => {
+                setOpenAlert(true)
+                setAlertMessage("Url has been deleted")
+
+            }).catch((err) => {
+                setOpenAlert(true)
+                setAlertMessage(`Photo has been not deleted ${err.message}`);
+                console.log("Error message", err.message)
+            });
     }
 
     //insert at top
@@ -256,18 +248,19 @@ const AddServices = () => {
             })
     }
     //delete : dilog box - image
-    const deleteServiceImagesOfDilogBox = (uid, url) => {
-        // alert(uid, suid_);
-        console.log(storageRefimg)
-        deleteObject(ref(storage, `${url}`))
+    const deleteServiceImagesOfDilogBox = (url, uid) => {
+        // console.log(index,url,uid,id);
+        deleteObject(ref(storage, `${url}`));
+
+        remove(rdbf(db, `SrcSource/${suid_}/simg/${uid}/`))
             .then(() => {
                 setOpenAlert(true)
-                setAlertMessage(`Url has been  deleted!`)
-            })
-            .catch((error) => {
+                setAlertMessage("Pdf has been deleted")
+            }).catch((err) => {
 
                 setOpenAlert(true)
-                setAlertMessage(`Url has been not deleted!  ${error.message}.`)
+                setAlertMessage(`Pdf has been not deleted ${err.message}`);
+                console.log("Error message", err.message)
             });
     }
 
@@ -426,141 +419,155 @@ const AddServices = () => {
             </Box>
 
             {/* dilog box start  */}
-            <Dialog
-                fullScreen
-                open={open}
-                onClose={handleClose}
-                TransitionComponent={Transition}
-            >
-                <AppBar sx={{ position: 'relative', bgcolor: colors.primary[400] }}>
-                    <Toolbar>
-                        <IconButton
-                            edge="start"
-                            color="inherit"
-                            onClick={handleClose}
-                            aria-label="close"
-                        >
-                            <CloseIcon />
-                        </IconButton>
-                        <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-                            Close
-                        </Typography>
+            <div>
+                <Dialog
+                    fullScreen
+                    open={open}
+                    onClose={handleClose}
+                    TransitionComponent={Transition}
+                >
+                    <AppBar sx={{ position: 'relative', bgcolor: colors.primary[400] }}>
+                        <Toolbar>
+                            <IconButton
+                                edge="start"
+                                color="inherit"
+                                onClick={handleClose}
+                                aria-label="close"
+                            >
+                                <CloseIcon />
+                            </IconButton>
+                            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+                                Close
+                            </Typography>
 
 
 
-                    </Toolbar>
-                </AppBar>
+                        </Toolbar>
+                    </AppBar>
 
-                <Grid container spacing={2} sx={{
-                    bgcolor: colors.primary[500]
-                }} >
-                    <Grid item xs={6} sx={{ borderRight: "3px solid white", marginTop: "20px" }} >
-                        <Stack direction="column"
-                            justifyContent="flex-start"
-                            alignItems="baseline"
-                            spacing={2}>
-                            <form onSubmit={addImage}>
-                                <IconButton color="primary" aria-label="upload picture" component="label">
-                                    <input hidden onChange={handleImageAsFile} accept="/image/*" type="file" />
-                                    <AddPhotoAlternateOutlinedIcon
-                                        sx={{
-                                            color: colors.greenAccent[400],
-                                            fontSize: "50px"
-                                        }} />
-                                </IconButton>
-                                <Button color="secondary" sx={{ textAlign: "right" }} variant="outlined" type="submit" disabled={!imageAsFile} >
-                                    Add Image
-                                    <button type="submit" hidden />
-                                </Button>
-
-                            </form>
-                        </Stack>
-                        <ImageList sx={{ width: 600, height: 450, margin: "10px auto" }} cols={3} rowHeight={164}>
-                            {allImages.map((allImagesData) => (
-                                <ImageListItem key={allImagesData.uid}>
-                                    <img className="myServiceImages"
-                                        src={allImagesData.image}
-                                        alt={allImagesData.uid}
-                                    />
-                                  
-
-                                </ImageListItem>
-                            ))}
-                        </ImageList>
-                    </Grid>
-
-                    <Grid item xs={6} sx={{ marginTop: "20px" }} >
-                        <Box
-                            sx={{
-                                width: 500,
-                                maxWidth: '100%',
-                            }}
-                        >
-                            <form onSubmit={handleWriteTextAccordian} style={{ position: "relative" }} >
-                                <TextField
-                                    id="standard-textarea"
-                                    label="Title"
-                                    placeholder="Enter your title"
-                                    multiline
-                                    variant="standard"
-                                    fullWidth
-                                    onChange={(e) => setTextFieldTitle(e.target.value)}
-                                    value={textFieldTitle}
-                                    name="textFieldTitle"
-                                    sx={{ gridColumn: "span 3", }}
-                                    margin="dense"
-                                />
-
-                                <TextField
-                                    id="standard-textarea"
-                                    label="Your text "
-                                    placeholder="Enter your text"
-                                    multiline
-                                    variant="standard"
-                                    fullWidth
-                                    onChange={(e) => setTextField(e.target.value)}
-                                    value={textField}
-                                    name="textField"
-                                    sx={{ gridColumn: "span 3", }}
-                                    margin="dense"
-                                />
-                                <Box style={{ position: "relative", top: "10px", right: "10px" }} >
-
-                                    <Button sx={{ marginTop: "10px", marginBottom: "10px", textAlign: "right", }} color="secondary" variant="outlined" type="submit">
-                                        Add Text
+                    <Grid container spacing={2} sx={{
+                        bgcolor: colors.primary[500]
+                    }} >
+                        <Grid item xs={6} sx={{ borderRight: "3px solid white", marginTop: "20px" }} >
+                            <Stack direction="column"
+                                justifyContent="flex-start"
+                                alignItems="baseline"
+                                spacing={2}>
+                                <form onSubmit={addImage}>
+                                    <IconButton color="primary" aria-label="upload picture" component="label">
+                                        <input hidden onChange={handleImageAsFile} accept="/image/*" type="file" />
+                                        <AddPhotoAlternateOutlinedIcon
+                                            sx={{
+                                                color: colors.greenAccent[400],
+                                                fontSize: "50px"
+                                            }} />
+                                    </IconButton>
+                                    <Button color="secondary" sx={{ textAlign: "right" }} variant="outlined" type="submit" disabled={!imageAsFile} >
+                                        Add Image
+                                        <button type="submit" hidden />
                                     </Button>
-                                </Box>
-                            </form>
 
-                        </Box>
-                        <Box sx={{ width: 600, height: 450, margin: "10px auto", overflowY: "scroll" }}  >
-                            {allTexts.map((text, index) => {
-                                return (
-                                    <Accordion key={index}>
-                                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                            <Typography color={colors.greenAccent[500]} variant="h5">
-                                                {index} - {text.tittle}
-                                            </Typography>
+                                </form>
+                            </Stack>
+                            <ImageList sx={{ width: 600, height: 450, margin: "10px auto" }} cols={3} rowHeight={164}>
+                                {allImages.map((allImagesData) => (
+                                    <ImageListItem key={allImagesData.uid}>
+                                        <img className="myServiceImages"
+                                            src={allImagesData.image}
+                                            alt={allImagesData.uid}
 
-                                        </AccordionSummary>
-                                        <AccordionDetails>
-                                            <Typography>
-                                                {text.paragraph}
-                                            </Typography>
-                                        </AccordionDetails>
-                                        <AccordionActions  >
-                                            <IconButton>
-                                                <DeleteIcon onClick={() => { deleteAccordions(text.uid, text.suid) }} />
-                                            </IconButton>
-                                        </AccordionActions>
-                                    </Accordion>
-                                )
-                            })}
-                        </Box>
+                                        />
+
+                                        <ImageListItemBar
+                                            // title={item.title}
+                                            // subtitle={item.author}
+                                            actionIcon={
+                                                <IconButton
+                                                    sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
+                                                    onClick={() => { deleteServiceImagesOfDilogBox(allImagesData.url, allImagesData.uid) }}
+                                                >
+                                                    <DeleteIcon />
+                                                </IconButton>
+                                            }
+                                        />
+                                    </ImageListItem>
+                                ))}
+                            </ImageList>
+                        </Grid>
+
+                        <Grid item xs={6} sx={{ marginTop: "20px" }} >
+                            <Box
+                                sx={{
+                                    width: 500,
+                                    maxWidth: '100%',
+                                }}
+                            >
+                                <form onSubmit={handleWriteTextAccordian} style={{ position: "relative" }} >
+                                    <TextField
+                                        id="standard-textarea"
+                                        label="Title"
+                                        placeholder="Enter your title"
+                                        multiline
+                                        variant="standard"
+                                        fullWidth
+                                        onChange={(e) => setTextFieldTitle(e.target.value)}
+                                        value={textFieldTitle}
+                                        name="textFieldTitle"
+                                        sx={{ gridColumn: "span 3", }}
+                                        margin="dense"
+                                    />
+
+                                    <TextField
+                                        id="standard-textarea"
+                                        label="Your text "
+                                        placeholder="Enter your text"
+                                        multiline
+                                        variant="standard"
+                                        fullWidth
+                                        onChange={(e) => setTextField(e.target.value)}
+                                        value={textField}
+                                        name="textField"
+                                        sx={{ gridColumn: "span 3", }}
+                                        margin="dense"
+                                    />
+                                    <Box style={{ position: "relative", top: "10px", right: "10px" }} >
+                                             
+                                        <Button disabled={!textFieldTitle || !textField} sx={{ marginTop: "10px", marginBottom: "10px", textAlign: "right", }} color="secondary" variant="outlined" type="submit">
+                                            Add Text
+                                        </Button>
+                                    </Box>
+                                </form>
+
+                            </Box>
+                            <Box sx={{ width: 600, height: 450, margin: "10px auto", overflowY: "scroll" }}  >
+                                {allTexts.map((text, index) => {
+                                    return (
+                                        <Accordion key={index}>
+                                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                                <Typography color={colors.greenAccent[500]} variant="h5">
+                                                    {index} - {text.tittle}
+                                                </Typography>
+
+                                            </AccordionSummary>
+                                            <AccordionDetails>
+                                                <Typography>
+                                                    {text.paragraph}
+                                                </Typography>
+                                            </AccordionDetails>
+                                            <AccordionActions  >
+                                                <IconButton onClick={() => { deleteAccordions(text.uid, text.suid) }} >
+                                                    <DeleteIcon  />
+                                                </IconButton>
+                                            </AccordionActions>
+                                        </Accordion>
+                                    )
+                                })}
+                            </Box>
+                        </Grid>
                     </Grid>
-                </Grid>
 
-            </Dialog>
+                </Dialog>
+            </div>
             {/* dilog box end  */}
         </Box >
     )

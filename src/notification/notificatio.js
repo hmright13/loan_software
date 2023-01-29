@@ -21,6 +21,7 @@ import {
   FormControl,
   InputLabel,
   TextField,
+  Alert,
 } from '@mui/material';
 import app from '../firebase/config';
 import { child, get, getDatabase, ref, set, update } from "firebase/database";
@@ -28,6 +29,8 @@ import { tokens } from "../theme";
 import Favorite from '@mui/icons-material/Favorite';
 import Header from '../components/Header';
 import ShowAlert from '../components/ShowAlert';
+import currentDate from '../utils/date';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
 const db = getDatabase(app);
 
@@ -36,6 +39,7 @@ const Notifications = () => {
   const colors = tokens(theme.palette.mode);
   const [openSelectDilog, setSelectDilog] = useState(false);
   const [select, setSelect] = useState(1);
+
   const [openAllNotificationDilogBox, setOpenAllNotificationDilogBox] = useState(false)
   const [openSendNotificationDilogBox, setOpenSendNotificationDilogBox] = useState(false)
   const [openRecevedNotificationDilogBox, setOpenRecevedNotificationDilogBox] = useState(false)
@@ -48,9 +52,23 @@ const Notifications = () => {
   const [notificationNameMessage, SetNotificationNameMessage] = useState("")
   const [userUid, setUserUid] = useState("")
   const [receveNotificationData, setReceveNotificationData] = useState([])
-  const [sendNotificationData, setSendNotificationData] = useState([])
-  console.log("sendNotificationData", "   : ", sendNotificationData)
+  const [allAndSendNotificationData, setallAndSendNotificationData] = useState([])
+  // console.log("allAndSendNotificationData", "   : ", allAndSendNotificationData)
+  // console.log("receveNotificationData", "   : ", receveNotificationData)
 
+
+
+  const openNotifications = () => {
+    if (select === 1) {
+      setOpenAllNotificationDilogBox(true)
+    }
+    if (select === 2) {
+      setOpenSendNotificationDilogBox(true)
+    }
+    if (select === 3) {
+      setOpenRecevedNotificationDilogBox(true)
+    }
+  }
   //read all user data
   useEffect(() => {
     const dbRef = ref(db);
@@ -73,6 +91,7 @@ const Notifications = () => {
   const handdleOpenSelectDilogBox = (uid, seq) => {
     setSelectDilog(true);
     setUserUid(uid);
+
   }
   //handdle Open Select DilogBox
   const handdlColseSelectDilogBox = () => {
@@ -82,15 +101,7 @@ const Notifications = () => {
   // select your choice 
   const handdleAdminSelection = (e) => {
     setSelect(e.target.value);
-    if (e.target.value === 1) {
-      setOpenAllNotificationDilogBox(true)
-    }
-    if (e.target.value === 2) {
-      setOpenSendNotificationDilogBox(true)
-    }
-    if (e.target.value === 3) {
-      setOpenRecevedNotificationDilogBox(true)
-    }
+
 
   }
 
@@ -128,15 +139,26 @@ const Notifications = () => {
     e.preventDefault();
     console.log(`Notification Sanded title is ${notificationNameTitle}, subject is ${notificationNameSublect}, message is ${notificationNameMessage}`)
     const uid = new Date().getTime();
-    set(ref(db, `NotificationSends/`), {
-      tittle: notificationNameTitle,
-      subject: notificationNameSublect,
-      message: notificationNameMessage,
-      uid
-    }).then(() => {
+
+    set(ref(db, `Enq/${userUid}/${uid}`), {
+      uid: `${userUid}`,
+      id: `${uid}`,
+      num: "1111111",
+      eml: "loan@gmail.com",
+      titl: notificationNameTitle,
+      sub: notificationNameSublect,
+      desc: notificationNameMessage,
+      date: `${currentDate}`,
+      seen: false,
+      who: true,
+      del: false,
+
+    }
+    ).then(() => {
+      console.log("Sand")
       setOpenAlert(true)
       setAlertMessage("Notifiaction Sand SuccessFully ")
-    })
+    }).catch(err => console.log(err.message))
   }
 
   // read notification
@@ -147,14 +169,15 @@ const Notifications = () => {
       .then((snapshot) => {
         const data = snapshot.val();
         setReceveNotificationData([]);
-        setSendNotificationData([])
+        setallAndSendNotificationData([])
         if (snapshot.exists()) {
 
-          Object.values(data).map((receveNotification) => {
-            if (receveNotification.who === true) {
-              return setSendNotificationData((oldSendNotification) => [...oldSendNotification, receveNotification])
+          Object.values(data).map((notification) => {
+            if (notification.who === true) {
+              return setallAndSendNotificationData((oldSendNotification) => [...oldSendNotification, notification])
             }
-            return setReceveNotificationData((oldReceveNotification) => [...oldReceveNotification, receveNotification])
+
+            return setReceveNotificationData((oldReceveNotification) => [...oldReceveNotification, notification])
           })
           // setuserUid(data)
         } else {
@@ -164,7 +187,39 @@ const Notifications = () => {
       .catch((error) => {
         console.error(error);
       });
-  }, [userUid])
+  }, [userUid]);
+
+
+
+  // 
+  const columns = [
+
+    {
+      field: "titl",
+      headerName: "Tittle",
+      flex: 1,
+      cellClassName: "name-column--cell",
+    },
+
+    {
+      field: "sub",
+      headerName: "Subject",
+      flex: 1,
+    },
+    {
+      field: "desc",
+      headerName: "Description",
+      flex: 1,
+
+    },
+    {
+      field: "date",
+      headerName: "Date",
+      flex: 1,
+
+    },
+  ];
+
   return (
     <Box m="20px">
       <Header title="Notifications" subtitle="Menage Your All User Notification" />
@@ -253,7 +308,15 @@ const Notifications = () => {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            {select && <Button onClick={() => { setOpenAllNotificationDilogBox(true) }} color="secondary" variant="outlined" > Open </Button>}
+            <Button
+              onClick={() => {
+                if (select === 1) { setOpenAllNotificationDilogBox(true) }
+                if (select === 2) { setOpenSendNotificationDilogBox(true) }
+                if (select === 3) { setOpenRecevedNotificationDilogBox(true) }
+              }}
+              color="secondary"
+              variant="outlined"
+            > Open </Button>
             <Button onClick={handdlColseSelectDilogBox} color="secondary" variant="outlined" > Close </Button>
           </DialogActions>
         </Dialog>
@@ -261,23 +324,60 @@ const Notifications = () => {
 
 
       {/*================================================== Dilog box : All Notification  ==================================================  */}
-      <div>
+      <div >
         <Dialog
           open={openAllNotificationDilogBox}
           onClose={() => { setOpenAllNotificationDilogBox(false) }}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
+          fullScreen
         >
           <DialogTitle id="alert-dialog-title">
             {` All Notification`}
           </DialogTitle>
           <DialogContent>
+            <Box
+              width="95vw"
+              height="85vh"
+              sx={{
+                "& .MuiDataGrid-root": {
+                  border: "none",
+                },
+                "& .MuiDataGrid-cell": {
+                  borderBottom: "none",
+                },
+                "& .name-column--cell": {
+                  color: colors.greenAccent[300],
+                },
+                "& .MuiDataGrid-columnHeaders": {
+                  backgroundColor: colors.blueAccent[700],
+                  borderBottom: "none",
+                },
+                "& .MuiDataGrid-virtualScroller": {
+                  backgroundColor: colors.primary[400],
+                },
+                "& .MuiDataGrid-footerContainer": {
+                  borderTop: "none",
+                  backgroundColor: colors.blueAccent[700],
+                },
+                "& .MuiCheckbox-root": {
+                  color: `${colors.greenAccent[200]} !important`,
+                },
+              }}
+            >
+              {/* */}
+              <DataGrid
+                getRowId={(allAndSendNotificationData) => allAndSendNotificationData.id}
+                checkboxSelection
+                disableSelectionOnClick
+                disableColumnSelector
+                components={{ Toolbar: GridToolbar }}
+                columns={columns}
+                rows={allAndSendNotificationData}
+              // onRowClick={handdleUpdateAppInstalledUser}
+              />
 
-            <DialogContentText id="alert-dialog-description">
-              this is All notification dilog box container
-            </DialogContentText>
-
-
+            </Box>
           </DialogContent>
           <DialogActions>
             <Button onClick={handdleCloseReqServiceDilog} color="secondary" variant="outlined" > Close </Button>
@@ -344,23 +444,33 @@ const Notifications = () => {
             </Box>
 
             <DialogContentText id="alert-dialog-description">
-              {sendNotificationData.length === 0 ? <Typography variant='h4' >Yet! ,  Not any notification</Typography> :
+              {allAndSendNotificationData.length === 0 ? <Typography variant='h4' >Yet! ,  Not any notification</Typography> :
 
-                sendNotificationData.map((sendNotificaion) => {
+                allAndSendNotificationData.map((allAndSendNotificaion) => {
                   return (
-                    <Box sx={{ width: '100%', maxWidth: 500 }}>
-                      <Typography variant="h5" gutterBottom>
-                        Tittle  is {sendNotificaion.titl}
-                      </Typography>
-                      <Typography variant="h5" gutterBottom>
-                        Subject   is {sendNotificaion.sub}
-                      </Typography>
-                      <Typography variant="h5" gutterBottom>
-                        Description   is {sendNotificaion.desc}
-                      </Typography>
-                      <Typography variant="h5" gutterBottom>
-                        Date   is {sendNotificaion.date}
-                      </Typography>
+                    <Box sx={{ width: '100%', maxWidth: 500, borderBottom: "1px solid white" }}>
+
+                      <Box display="flex" flex="1"  >
+                        <Typography flex="0.30" variant="h4" color={colors.greenAccent[400]} gutterBottom  > Tittle  is  </Typography>
+                        <Typography flex="0.70" variant='h5' color={colors.grey[400]} >  {allAndSendNotificaion.titl}   </Typography>
+                      </Box>
+
+                      <Box display="flex" flex="1"  >
+                        <Typography flex="0.30" variant="h4" color={colors.greenAccent[400]} gutterBottom  > Subject is </Typography>
+                        <Typography flex="0.70" variant="h5" gutterBottom >{allAndSendNotificaion.sub}</Typography>
+                      </Box>
+
+
+                      <Box display="flex" flex="1"  >
+                        <Typography flex="0.30" variant="h4" color={colors.greenAccent[400]} gutterBottom>Description is </Typography>
+                        <Typography flex="0.70" variant='h5'>{allAndSendNotificaion.desc}</Typography>
+                      </Box>
+
+                      <Box display="flex" flex="1"  >
+                        <Typography flex="0.30" variant="h4" color={colors.greenAccent[400]} gutterBottom > Notifyed At </Typography>
+                        <Typography flex="0.70" variant='h5' >  {allAndSendNotificaion.date} </Typography>
+                      </Box>
+
                     </Box>
                   )
                 })
@@ -392,19 +502,29 @@ const Notifications = () => {
             <DialogContentText id="alert-dialog-description">
               {receveNotificationData.map((receveNotificaion) => {
                 return (
-                  <Box sx={{ width: '100%', maxWidth: 500 }}>
-                    <Typography variant="h5" gutterBottom>
-                      Tittle  is {receveNotificaion.titl}
-                    </Typography>
-                    <Typography variant="h5" gutterBottom>
-                      Subject   is {receveNotificaion.sub}
-                    </Typography>
-                    <Typography variant="h5" gutterBottom>
-                      Description   is {receveNotificaion.desc}
-                    </Typography>
-                    <Typography variant="h5" gutterBottom>
-                      Date   is {receveNotificaion.date}
-                    </Typography>
+                  <Box sx={{ width: '100%', maxWidth: 500, borderBottom: "1px solid white" }}>
+
+                    <Box display="flex" flex="1"  >
+                      <Typography flex="0.30" variant="h4" color={colors.greenAccent[400]} gutterBottom  >Tittle  is </Typography>
+                      <Typography flex="0.70" variant='h4' color={colors.grey[400]} >  {receveNotificaion.titl}   </Typography>
+                    </Box>
+
+                    <Box display="flex" flex="1"  >
+                      <Typography flex="0.30" variant="h4" color={colors.greenAccent[400]} gutterBottom  >Subject is </Typography>
+                      <Typography flex="0.70" variant="h5" gutterBottom >{receveNotificaion.sub}</Typography>
+                    </Box>
+
+
+                    <Box display="flex" flex="1"  >
+                      <Typography flex="0.30" variant="h4" color={colors.greenAccent[400]} gutterBottom>Description is </Typography>
+                      <Typography flex="0.70" typography="" variant='h4'>{receveNotificaion.desc}</Typography>
+                    </Box>
+
+                    <Box display="flex" flex="1"  >
+                      <Typography flex="0.30" variant="h4" color={colors.greenAccent[400]} gutterBottom > Notifyed At </Typography>
+                      <Typography flex="0.70" variant='h4' >  {receveNotificaion.date} </Typography>
+                    </Box>
+
                   </Box>
                 )
               })}
