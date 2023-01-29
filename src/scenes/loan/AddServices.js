@@ -220,7 +220,7 @@ const AddServices = () => {
 
                         setFile("");
                         setImagePercent(0)
-
+                        setImageAsFile("")
                         setOpenAlert(true)
                         setAlertMessage(`Photos Added Successfully!`)
                     });
@@ -255,12 +255,12 @@ const AddServices = () => {
         remove(rdbf(db, `SrcSource/${suid_}/simg/${uid}/`))
             .then(() => {
                 setOpenAlert(true)
-                setAlertMessage("Pdf has been deleted")
+                setAlertMessage("Image has been deleted")
             }).catch((err) => {
 
                 setOpenAlert(true)
-                setAlertMessage(`Pdf has been not deleted ${err.message}`);
-                console.log("Error message", err.message)
+                setAlertMessage(`Image has been not deleted ${err.message}`);
+                // console.log("Error message", err.message)
             });
     }
 
@@ -531,7 +531,7 @@ const AddServices = () => {
                                         margin="dense"
                                     />
                                     <Box style={{ position: "relative", top: "10px", right: "10px" }} >
-                                             
+
                                         <Button disabled={!textFieldTitle || !textField} sx={{ marginTop: "10px", marginBottom: "10px", textAlign: "right", }} color="secondary" variant="outlined" type="submit">
                                             Add Text
                                         </Button>
@@ -556,7 +556,7 @@ const AddServices = () => {
                                             </AccordionDetails>
                                             <AccordionActions  >
                                                 <IconButton onClick={() => { deleteAccordions(text.uid, text.suid) }} >
-                                                    <DeleteIcon  />
+                                                    <DeleteIcon />
                                                 </IconButton>
                                             </AccordionActions>
                                         </Accordion>

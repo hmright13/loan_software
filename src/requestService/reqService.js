@@ -26,12 +26,11 @@ const RequestServices = () => {
     const [requsestServicesData, setrequsestServicesData] = useState([]);
 
     const [userName, setUSerName] = useState(null)
-    const [userUid, setUserUid] = useState(null)
-    const [userSeq, setUserSeq] = useState(null)
+
     const [openAlert, setOpenAlert] = useState(false)
     const [alertMessage, setAlertMessage] = useState("")
 
-    // console.log(`Mysrc/${userUid}/${userSeq}`);
+  
 
     useEffect(() => {
         const dbRef = ref(db);
@@ -86,19 +85,19 @@ const RequestServices = () => {
                 console.log("data is not avilable", error.message);
             });
 
-       
-       // set user name as a global variable
-            setUSerName(name);
+
+        // set user name as a global variable
+        setUSerName(name);
 
 
         //update request seen
- 
-      
+
+
         update(child(dbRef, `Mysrc/${uid}/${seq}`), {
             seen: true
         }).then(() => {
             console.log("Updated")
-        }).catch(err => console.log("not updated ",err.message))
+        }).catch(err => console.log("not updated ", err.message))
     }
     //handdle Open Select DilogBox
     const handdlColseSelectDilogBox = () => {
@@ -113,13 +112,7 @@ const RequestServices = () => {
     // select your choice 
     const handdleAdminSelection = (e) => {
         setSelect(e.target.value)
-        if (e.target.value === 1) {
-            setOpen(true)
-        }
-        if (e.target.value === 2) {
-            setOpenRequestServiceDilogBox(true);
-       
-        }
+
     }
 
 
@@ -286,7 +279,15 @@ const RequestServices = () => {
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                        {select && <Button onClick={() => { setOpenRequestServiceDilogBox(true) }} color="secondary" variant="outlined" > Open </Button>}
+                        {select && <Button onClick={() => {
+                            if (select === 1) {
+                                setOpen(true)
+                            }
+                            if (select === 2) {
+                                setOpenRequestServiceDilogBox(true);
+
+                            }
+                        }} color="secondary" variant="outlined" > Open </Button>}
                         <Button onClick={handdlColseSelectDilogBox} color="secondary" variant="outlined" > Close </Button>
                     </DialogActions>
                 </Dialog>

@@ -75,7 +75,7 @@ const AllUserList = () => {
         seen: true
       }).then(() => {
         setOpenAlert(true);
-        let msg = `<h2> ${name} </h2> Added In Favorite List`;
+        let msg = ` ${name} Added In Favorite List`;
         setAlertMessage(msg)
         // setAlertMessage(` Added In Favorite List`)
       }).catch(err => alert(err.message))
@@ -84,7 +84,7 @@ const AllUserList = () => {
         seen: false
       }).then(() => {
         setOpenAlert(true);
-        setAlertMessage(` <h2> ${name} </h2> Removed from Favorite List`)
+        setAlertMessage(` ${name}  Removed from Favorite List`)
         // setAlertMessage(`  Removed from Favorite List`)
 
       }).catch(err => console.log(err.message))

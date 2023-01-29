@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
-import myImg from './../../images/img.png'
+import myImg from "../../images/profile.jpg"
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../theme";
 import LinearScaleIcon from '@mui/icons-material/LinearScale';
@@ -42,7 +42,7 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
 const Sidebar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
 
   return (
@@ -111,7 +111,7 @@ const Sidebar = () => {
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
                 >
-                  Sagar Verma
+                  Loan Consultant
                 </Typography>
                 <Typography variant="h5" color={colors.greenAccent[500]}>
                   VP Fancy Admin
@@ -182,8 +182,8 @@ const Sidebar = () => {
             >
               Data
             </Typography>
-         
-      
+
+
             <Item
               title="All Client"
               to="/all-users"
@@ -205,21 +205,21 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-     
+
             <Item
               title="Installed User"
               to="/app-installed-user"
               icon={<ArrowCircleLeftOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
-            />    
+            />
             <Item
               title="Request Services"
               to="/requset-services"
               icon={<DownloadDoneIcon />}
               selected={selected}
               setSelected={setSelected}
-            />    
+            />
             <Typography
               variant="h6"
               color={colors.grey[300]}
