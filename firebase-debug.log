@@ -1,0 +1,33 @@
+[debug] [2023-01-30T04:43:06.389Z] ----------------------------------------------------------------------
+[debug] [2023-01-30T04:43:06.391Z] Command:       /usr/local/share/nvm/versions/node/v19.5.0/bin/node /home/codespace/nvm/current/bin/firebase init
+[debug] [2023-01-30T04:43:06.391Z] CLI Version:   11.21.0
+[debug] [2023-01-30T04:43:06.391Z] Platform:      linux
+[debug] [2023-01-30T04:43:06.391Z] Node Version:  v19.5.0
+[debug] [2023-01-30T04:43:06.391Z] Time:          Mon Jan 30 2023 04:43:06 GMT+0000 (Coordinated Universal Time)
+[debug] [2023-01-30T04:43:06.392Z] Env Overrides: GITHUB_API_URL
+[debug] [2023-01-30T04:43:06.392Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-01-30T04:43:06.397Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-01-30T04:43:06.397Z] > authorizing via signed-in user (myprojecthmright@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  /workspaces/loan_software
+
+Before we get started, keep in mind:
+
+  * You are currently outside your home directory
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] but for now we'll just set up a default project.
+[info] 
